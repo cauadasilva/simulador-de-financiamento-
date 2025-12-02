@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simulador de Financiamento</title>
+    <!-- Carrega Tailwind CSS para estilização rápida e responsiva -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* Define a fonte Inter como padrão */
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f7f9fc;
+        }
+    </style>
+</head>
+<body class="p-4 md:p-8 flex items-center justify-center min-h-screen">
+
+    <div class="w-full max-w-md bg-white p-6 md:p-8 rounded-xl shadow-2xl border border-gray-100">
+        <h1 class="text-3xl font-extrabold text-gray-900 mb-6 text-center">
+            Simulador de Financiamento
+        </h1>
+        <p class="text-sm text-gray-500 mb-8 text-center">
+            Calcule o valor da sua parcela e o custo total do crédito.
+        </p>
+
+        <!-- Formulário de Input -->
+        <div class="space-y-5" id="simulator-form">
+            <!-- Valor do Financiamento (Principal) -->
+            <div>
+                <label for="principal" class="block text-sm font-medium text-gray-700 mb-1">
+                    Valor do Financiamento (R$)
+                </label>
+                <input type="number" id="principal" value="20000" min="1000" step="1000"
+                       class="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500 transition duration-150"
+                       placeholder="Ex: 20000" required>
+            </div>
+
+            <!-- Taxa de Juros Anual -->
+            <div>
+                <label for="annualRate" class="block text-sm font-medium text-gray-700 mb-1">
+                    Taxa de Juros Anual (%)
+                </label>
+                <input type="number" id="annualRate" value="12" min="0.1" step="0.1"
+                       class="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500 transition duration-150"
+                       placeholder="Ex: 12.0" required>
+            </div>
+
+            <!-- Prazo em Meses -->
+            <div>
+                <label for="termMonths" class="block text-sm font-medium text-gray-700 mb-1">
+                    Prazo em Meses
+                </label>
+                <input type="number" id="termMonths" value="36" min="1" step="1"
+                       class="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500 transition duration-150"
+                       placeholder="Ex: 36" required>
+            </div>
+
+            <!-- Botão de Cálculo -->
+            <button id="calculate-btn"
+                    class="w-full mt-6 py-3 px-4 border border-transparent rounded-lg shadow-lg text-white font-semibold bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition duration-150 transform hover:scale-[1.01] active:scale-[0.99]">
+                Calcular
+            </button>
+        </div>
+
+        <!-- Área de Resultados -->
+        <div id="results" class="mt-8 pt-6 border-t border-gray-200 hidden">
+            <h2 class="text-xl font-bold text-gray-900 mb-4">
+                Resultado da Simulação
+            </h2>
+            
+            <!-- Valor da Parcela -->
+            <div class="flex justify-between items-center py-3 px-4 bg-green-50 rounded-lg mb-4 border border-green-200">
+                <span class="text-sm font-medium text-gray-700">Valor da Parcela (Mensal):</span>
+                <span id="installment-value" class="text-lg font-bold text-green-700">R$ 0,00</span>
+            </div>
+
+            <!-- Total Pago (Custo Total do Crédito) -->
+            <div class="flex justify-between items-center py-3 px-4 bg-yellow-50 rounded-lg border border-yellow-200">
+                <span class="text-sm font-medium text-gray-700">Total Pago (Crédito Total):</span>
+                <span id="total-paid-value" class="text-lg font-bold text-yellow-700">R$ 0,00</span>
+            </div>
+
+            <p id="error-message" class="text-sm text-red-500 mt-4 hidden">
+                Houve um erro no cálculo. Verifique os valores inseridos.
+            </p>
+        </div>
+
+    </div>
+
+    <script>
+        // Função para formatar números como moeda brasileira (Real)
+        const formatCurrency = (amount) => {
+            return new Intl.NumberFormat('pt-BR', {
+                style: 'currency',
+                currency: 'BRL',
+                minimumFractionDigits: 2,
+            }).format(amount);
+        };
+
+        // Função principal para calcular o financiamento (Tabela Price)
+        function calculateFinancing() {
+            // 1. Obter valores dos inputs
+            const principalInput = document.getElementById('principal');
+            const annualRateInput = document.getElementById('annualRate');
+            const termMonthsInput = document.getElementById('termMonths');
+
+            const principal = parseFloat(principalInput.value);
+            const annualRate = parseFloat(annualRateInput.value);
+            const termMonths = parseInt(termMonthsInput.value);
+
+            const resultsDiv = document.getElementById('results');
+            const installmentOutput = document.getElementById('installment-value');
+            const totalPaidOutput = document.getElementById('total-paid-value');
+            const errorMsg = document.getElementById('error-message');
+
+            // Resetar resultados e erro
+            resultsDiv.classList.add('hidden');
+            errorMsg.classList.add('hidden');
+
+            // 2. Validação básica dos dados
+            if (isNaN(principal) || isNaN(annualRate) || isNaN(termMonths) || principal <= 0 || annualRate < 0 || termMonths <= 0) {
+                errorMsg.textContent = "Por favor, preencha todos os campos com valores válidos e positivos.";
+                errorMsg.classList.remove('hidden');
+                return;
+            }
+
+            // 3. Conversão da taxa de juros anual para mensal decimal
+            // Ex: 12% anuais -> 1% mensais -> 0.01
+            const monthlyRate = (annualRate / 100) / 12;
+
+            let monthlyPayment = 0;
+            let totalPaid = 0;
+
+            try {
+                if (monthlyRate === 0) {
+                    // Se a taxa for zero, o pagamento é apenas o principal dividido pelo prazo
+                    monthlyPayment = principal / termMonths;
+                } else {
+                    // Fórmula de Amortização (Tabela Price): P = PV * [r * (1 + r)^n] / [(1 + r)^n - 1]
+                    const power = Math.pow(1 + monthlyRate, termMonths);
+                    monthlyPayment = principal * (monthlyRate * power) / (power - 1);
+                }
+
+                // Cálculo do Total Pago (Total de Crédito = Principal + Juros)
+                totalPaid = monthlyPayment * termMonths;
+
+                // 4. Atualizar o DOM com os resultados formatados
+                installmentOutput.textContent = formatCurrency(monthlyPayment);
+                totalPaidOutput.textContent = formatCurrency(totalPaid);
+                
+                // Mostrar a área de resultados
+                resultsDiv.classList.remove('hidden');
+
+            } catch (e) {
+                console.error("Erro durante o cálculo:", e);
+                errorMsg.textContent = "Ocorreu um erro inesperado no cálculo. Tente valores diferentes.";
+                errorMsg.classList.remove('hidden');
+            }
+        }
+
+        // 5. Adicionar listener ao botão
+        document.getElementById('calculate-btn').addEventListener('click', calculateFinancing);
+        
+        // Calcular com os valores iniciais ao carregar a página
+        window.onload = function() {
+            calculateFinancing();
+        };
+
+    </script>
+</body>
+</html>
+
