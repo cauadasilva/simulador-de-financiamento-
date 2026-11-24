@@ -1,173 +1,948 @@
+
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Simulador de Financiamento</title>
-    <!-- Carrega Tailwind CSS para estilização rápida e responsiva -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    <style>
-        /* Define a fonte Inter como padrão */
-        body {
-            font-family: 'Inter', sans-serif;
-            background-color: #f7f9fc;
-        }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Simulador Financeiro | Brasil</title>
+<link rel="icon" type="image/png" href="Logo de Calculadora Financeira Azul.png">
+
+
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+
+:root {
+    --primary: #175cd3;
+    --primary-dark: #1249a8;
+    --bg: #f4f6fa;
+    --text: #172033;
+    --muted: #667085;
+    --border: #e5e9f0;
+    --green: #079455;
+}
+
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    font-family: 'Inter', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+}
+
+header {
+    background: #fff;
+    border-bottom: 1px solid var(--border);
+    padding: 20px 7%;
+}
+
+.header-content {
+    max-width: 1100px;
+    margin: auto;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.brand {
+    font-size: 19px;
+    font-weight: 800;
+    letter-spacing: -0.7px;
+}
+
+.brand span {
+    color: var(--primary);
+}
+
+.header-tag {
+    font-size: 12px;
+    color: var(--muted);
+    background: #f2f4f7;
+    padding: 8px 12px;
+    border-radius: 20px;
+}
+
+main {
+    max-width: 1100px;
+    margin: 42px auto;
+    padding: 0 20px;
+}
+
+.intro {
+    margin-bottom: 28px;
+}
+
+.intro h1 {
+    font-size: 29px;
+    letter-spacing: -1px;
+    margin: 0 0 9px;
+}
+
+.intro p {
+    color: var(--muted);
+    font-size: 14px;
+    line-height: 1.7;
+    margin: 0;
+}
+
+.tabs {
+    display: flex;
+    gap: 8px;
+    border-bottom: 1px solid var(--border);
+    margin-bottom: 25px;
+}
+
+.tab {
+    border: none;
+    background: transparent;
+    padding: 14px 18px;
+    font-family: inherit;
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--muted);
+    cursor: pointer;
+    border-bottom: 2px solid transparent;
+}
+
+.tab.active {
+    color: var(--primary);
+    border-color: var(--primary);
+}
+
+.panel {
+    display: none;
+}
+
+.panel.active {
+    display: block;
+}
+
+.card {
+    background: #fff;
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 26px;
+    margin-bottom: 20px;
+    box-shadow: 0 3px 12px rgba(16,24,40,.025);
+}
+
+.card h2 {
+    font-size: 17px;
+    margin: 0 0 8px;
+}
+
+.card-description {
+    color: var(--muted);
+    font-size: 13px;
+    line-height: 1.6;
+    margin-bottom: 23px;
+}
+
+.form-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 20px;
+}
+
+.field label {
+    display: block;
+    font-size: 13px;
+    font-weight: 600;
+    margin-bottom: 8px;
+}
+
+.field input {
+    width: 100%;
+    padding: 13px;
+    border: 1px solid #d0d5dd;
+    border-radius: 8px;
+    outline: none;
+    font-family: inherit;
+    font-size: 14px;
+    transition: .2s;
+}
+
+.field input:focus {
+    border-color: var(--primary);
+    box-shadow: 0 0 0 3px rgba(23,92,211,.1);
+}
+
+.field small {
+    display: block;
+    color: var(--muted);
+    font-size: 11px;
+    margin-top: 7px;
+}
+
+.rate-label {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+}
+
+.brazil-tag {
+    background: #eaf7ef;
+    color: #16804a;
+    font-size: 10px;
+    font-weight: 700;
+    padding: 5px 9px;
+    border-radius: 20px;
+}
+
+.actions {
+    display: flex;
+    gap: 10px;
+    margin-top: 24px;
+}
+
+button.primary {
+    background: var(--primary);
+    color: white;
+    border: none;
+    border-radius: 8px;
+    padding: 14px 22px;
+    font-family: inherit;
+    font-weight: 600;
+    font-size: 13px;
+    cursor: pointer;
+    transition: .2s;
+}
+
+button.primary:hover {
+    background: var(--primary-dark);
+}
+
+button.secondary {
+    background: white;
+    border: 1px solid var(--border);
+    color: var(--text);
+    border-radius: 8px;
+    padding: 14px 18px;
+    font-family: inherit;
+    font-weight: 600;
+    font-size: 13px;
+    cursor: pointer;
+}
+
+.results {
+    display: none;
+    margin-top: 24px;
+}
+
+.results.show {
+    display: block;
+}
+
+.result-main {
+    background: #edf4ff;
+    border: 1px solid #d5e5ff;
+    padding: 24px;
+    border-radius: 12px;
+    margin-bottom: 14px;
+}
+
+.result-main span {
+    color: #475467;
+    font-size: 13px;
+}
+
+.result-main strong {
+    display: block;
+    font-size: 30px;
+    color: var(--primary);
+    margin-top: 8px;
+    letter-spacing: -1px;
+}
+
+.result-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+}
+
+.result-item {
+    background: #f8fafc;
+    border: 1px solid var(--border);
+    padding: 17px;
+    border-radius: 10px;
+}
+
+.result-item span {
+    display: block;
+    color: var(--muted);
+    font-size: 11px;
+    margin-bottom: 9px;
+}
+
+.result-item strong {
+    font-size: 15px;
+}
+
+.error {
+    display: none;
+    color: #b42318;
+    font-size: 13px;
+    margin-top: 15px;
+}
+
+/* ABA BRASIL */
+
+.sel ic {
+    display: none;
+}
+
+.selic-box {
+    background: linear-gradient(120deg, #123b7a, #175cd3);
+    border-radius: 14px;
+    color: white;
+    padding: 28px;
+    margin-bottom: 22px;
+}
+
+.selic-box .eyebrow {
+    font-size: 12px;
+    opacity: .8;
+    margin-bottom: 12px;
+}
+
+.selic-box h2 {
+    font-size: 15px;
+    font-weight: 500;
+    margin: 0 0 8px;
+}
+
+.selic-value {
+    font-size: 39px;
+    font-weight: 800;
+    letter-spacing: -1.5px;
+}
+
+.selic-box p {
+    font-size: 12px;
+    line-height: 1.6;
+    opacity: .85;
+    margin: 12px 0 0;
+}
+
+.section-title {
+    font-size: 18px;
+    margin: 30px 0 8px;
+}
+
+.section-subtitle {
+    color: var(--muted);
+    font-size: 13px;
+    margin: 0 0 20px;
+    line-height: 1.6;
+}
+
+.table-wrap {
+    overflow-x: auto;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    min-width: 540px;
+}
+
+th {
+    background: #f8fafc;
+    color: #667085;
+    font-size: 11px;
+    font-weight: 700;
+    text-align: left;
+    padding: 15px 12px;
+}
+
+td {
+    border-bottom: 1px solid var(--border);
+    padding: 16px 12px;
+    font-size: 12px;
+}
+
+td strong {
+    font-size: 13px;
+}
+
+.rate-year {
+    color: #b54708;
+    font-weight: 700;
+}
+
+.rate-month {
+    color: var(--primary);
+    font-weight: 600;
+}
+
+.education-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 16px;
+    margin-top: 18px;
+}
+
+.education-card {
+    padding: 21px;
+    background: #fff;
+    border: 1px solid var(--border);
+    border-radius: 12px;
+}
+
+.education-card .number {
+    color: var(--primary);
+    font-size: 12px;
+    font-weight: 700;
+    margin-bottom: 12px;
+}
+
+.education-card h3 {
+    font-size: 15px;
+    margin: 0 0 9px;
+}
+
+.education-card p {
+    color: var(--muted);
+    font-size: 12px;
+    line-height: 1.7;
+    margin: 0;
+}
+
+.formula-box {
+    background: #101828;
+    color: white;
+    border-radius: 12px;
+    padding: 24px;
+    margin-top: 20px;
+}
+
+.formula-box h3 {
+    font-size: 14px;
+    margin: 0 0 15px;
+}
+
+.formula {
+    font-size: 20px;
+    font-weight: 600;
+    color: #84adff;
+    text-align: center;
+    padding: 15px 0;
+}
+
+.formula-box p {
+    color: #cbd5e1;
+    font-size: 12px;
+    line-height: 1.7;
+    margin: 10px 0 0;
+}
+
+.example-box {
+    background: #f0fdf4;
+    border: 1px solid #bbf7d0;
+    border-radius: 10px;
+    padding: 18px;
+    margin-top: 15px;
+}
+
+.example-box strong {
+    color: #15803d;
+    font-size: 13px;
+}
+
+.example-box p {
+    color: #166534;
+    font-size: 12px;
+    line-height: 1.7;
+    margin: 8px 0 0;
+}
+
+.notice {
+    background: #fffaeb;
+    border: 1px solid #fedf89;
+    color: #854d0e;
+    border-radius: 9px;
+    padding: 15px;
+    font-size: 11px;
+    line-height: 1.7;
+    margin-top: 20px;
+}
+
+footer {
+    text-align: center;
+    padding: 28px 15px;
+    color: var(--muted);
+    font-size: 11px;
+    border-top: 1px solid var(--border);
+    margin-top: 50px;
+}
+
+@media(max-width:650px) {
+    header {
+        padding: 17px 20px;
+    }
+
+    main {
+        margin-top: 28px;
+    }
+
+    .intro h1 {
+        font-size: 24px;
+    }
+
+    .form-grid,
+    .education-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .result-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .actions {
+        flex-direction: column;
+    }
+
+    .actions button {
+        width: 100%;
+    }
+
+    .card {
+        padding: 19px;
+    }
+
+    .tab {
+        padding: 13px 10px;
+        font-size: 12px;
+    }
+
+    .selic-value {
+        font-size: 33px;
+    }
+}
+</style>
 </head>
-<body class="p-4 md:p-8 flex items-center justify-center min-h-screen">
 
-    <div class="w-full max-w-md bg-white p-6 md:p-8 rounded-xl shadow-2xl border border-gray-100">
-        <h1 class="text-3xl font-extrabold text-gray-900 mb-6 text-center">
-            Simulador de Financiamento
-        </h1>
-        <p class="text-sm text-gray-500 mb-8 text-center">
-            Calcule o valor da sua parcela e o custo total do crédito.
-        </p>
+<body>
 
-        <!-- Formulário de Input -->
-        <div class="space-y-5" id="simulator-form">
-            <!-- Valor do Financiamento (Principal) -->
-            <div>
-                <label for="principal" class="block text-sm font-medium text-gray-700 mb-1">
-                    Valor do Financiamento (R$)
-                </label>
-                <input type="number" id="principal" value="20000" min="1000" step="1000"
-                       class="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500 transition duration-150"
-                       placeholder="Ex: 20000" required>
+<header>
+    <div class="header-content">
+        <div class="brand">FINANCE<span>CALC</span></div>
+        <div class="header-tag">EDUCAÇÃO FINANCEIRA</div>
+    </div>
+</header>
+
+<main>
+
+    <div class="intro">
+        <h1>Simulador de Financiamento</h1>
+        <p>Simule operações de crédito, compreenda os juros compostos e conheça o panorama das taxas de juros no Brasil.</p>
+    </div>
+
+    <nav class="tabs">
+        <button class="tab active" data-tab="simulator">Simulador</button>
+        <button class="tab" data-tab="brazil">Juros no Brasil</button>
+    </nav>
+
+    <!-- SIMULADOR -->
+
+    <section class="panel active" id="simulator">
+
+        <div class="card">
+            <h2>Dados do financiamento</h2>
+            <p class="card-description">
+                Informe o valor desejado, a taxa de juros anual e o prazo para calcular as parcelas.
+            </p>
+
+            <div class="form-grid">
+
+                <div class="field">
+                    <label for="principal">Valor do financiamento (R$)</label>
+                    <input type="number" id="principal" value="20000" min="0.01" step="100">
+                    <small>Valor total solicitado no financiamento.</small>
+                </div>
+
+                <div class="field">
+                    <label for="annualRate">
+                        <span class="rate-label">
+                            Taxa de juros anual (% a.a.)
+                            <span class="brazil-tag">Brasil</span>
+                        </span>
+                    </label>
+                    <input type="number" id="annualRate" value="13.75" min="0" step="0.01">
+                    <small>Referência inicial: 13,75% ao ano.</small>
+                </div>
+
+                <div class="field">
+                    <label for="termMonths">Prazo em meses</label>
+                    <input type="number" id="termMonths" value="36" min="1" step="1">
+                    <small>Duração total do financiamento.</small>
+                </div>
+
             </div>
 
-            <!-- Taxa de Juros Anual -->
-            <div>
-                <label for="annualRate" class="block text-sm font-medium text-gray-700 mb-1">
-                    Taxa de Juros Anual (%)
-                </label>
-                <input type="number" id="annualRate" value="12" min="0.1" step="0.1"
-                       class="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500 transition duration-150"
-                       placeholder="Ex: 12.0" required>
+            <div class="actions">
+                <button class="primary" id="calculate">Calcular financiamento</button>
+                <button class="secondary" id="useSelic">Usar taxa Brasil (13,75%)</button>
             </div>
 
-            <!-- Prazo em Meses -->
-            <div>
-                <label for="termMonths" class="block text-sm font-medium text-gray-700 mb-1">
-                    Prazo em Meses
-                </label>
-                <input type="number" id="termMonths" value="36" min="1" step="1"
-                       class="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500 transition duration-150"
-                       placeholder="Ex: 36" required>
-            </div>
+            <p class="error" id="error"></p>
 
-            <!-- Botão de Cálculo -->
-            <button id="calculate-btn"
-                    class="w-full mt-6 py-3 px-4 border border-transparent rounded-lg shadow-lg text-white font-semibold bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition duration-150 transform hover:scale-[1.01] active:scale-[0.99]">
-                Calcular
-            </button>
+            <div class="results" id="results">
+
+                <div class="result-main">
+                    <span>Valor estimado da parcela mensal</span>
+                    <strong id="installment">R$ 0,00</strong>
+                </div>
+
+                <div class="result-grid">
+                    <div class="result-item">
+                        <span>Total pago</span>
+                        <strong id="totalPaid">R$ 0,00</strong>
+                    </div>
+
+                    <div class="result-item">
+                        <span>Total de juros</span>
+                        <strong id="totalInterest">R$ 0,00</strong>
+                    </div>
+
+                    <div class="result-item">
+                        <span>Taxa mensal equivalente</span>
+                        <strong id="monthlyRate">0,00%</strong>
+                    </div>
+                </div>
+
+                <div class="notice">
+                    Simulação matemática pela Tabela Price. Não inclui necessariamente tarifas, seguros, impostos, CET ou outras despesas cobradas pelas instituições financeiras.
+                </div>
+
+            </div>
         </div>
+    </section>
 
-        <!-- Área de Resultados -->
-        <div id="results" class="mt-8 pt-6 border-t border-gray-200 hidden">
-            <h2 class="text-xl font-bold text-gray-900 mb-4">
-                Resultado da Simulação
-            </h2>
-            
-            <!-- Valor da Parcela -->
-            <div class="flex justify-between items-center py-3 px-4 bg-green-50 rounded-lg mb-4 border border-green-200">
-                <span class="text-sm font-medium text-gray-700">Valor da Parcela (Mensal):</span>
-                <span id="installment-value" class="text-lg font-bold text-green-700">R$ 0,00</span>
-            </div>
+    <!-- JUROS NO BRASIL -->
 
-            <!-- Total Pago (Custo Total do Crédito) -->
-            <div class="flex justify-between items-center py-3 px-4 bg-yellow-50 rounded-lg border border-yellow-200">
-                <span class="text-sm font-medium text-gray-700">Total Pago (Crédito Total):</span>
-                <span id="total-paid-value" class="text-lg font-bold text-yellow-700">R$ 0,00</span>
-            </div>
+    <section class="panel" id="brazil">
 
-            <p id="error-message" class="text-sm text-red-500 mt-4 hidden">
-                Houve um erro no cálculo. Verifique os valores inseridos.
+        <div class="selic-box">
+            <div class="eyebrow">TAXA BÁSICA DE JUROS</div>
+            <h2>Taxa Selic — Brasil</h2>
+            <div class="selic-value">13,75% a.a.</div>
+            <p>
+                Referência informada para novembro de 2026.
+                A Selic é a taxa básica de juros da economia brasileira
+                e influencia diversas operações de crédito e investimentos.
             </p>
         </div>
 
-    </div>
+        <div class="card">
+            <h2>Panorama das taxas anuais no Brasil</h2>
+            <p class="card-description">
+                Conheça as taxas médias de diferentes modalidades de crédito e compare seus equivalentes mensais.
+            </p>
 
-    <script>
-        // Função para formatar números como moeda brasileira (Real)
-        const formatCurrency = (amount) => {
-            return new Intl.NumberFormat('pt-BR', {
-                style: 'currency',
-                currency: 'BRL',
-                minimumFractionDigits: 2,
-            }).format(amount);
-        };
+            <div class="table-wrap">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Modalidade</th>
+                            <th>Taxa anual</th>
+                            <th>Equivalente mensal</th>
+                        </tr>
+                    </thead>
+                    <tbody id="ratesTable"></tbody>
+                </table>
+            </div>
 
-        // Função principal para calcular o financiamento (Tabela Price)
-        function calculateFinancing() {
-            // 1. Obter valores dos inputs
-            const principalInput = document.getElementById('principal');
-            const annualRateInput = document.getElementById('annualRate');
-            const termMonthsInput = document.getElementById('termMonths');
+            <div class="notice">
+                <strong>Importante:</strong> os valores desta tabela são referências fornecidas para novembro de 2026, não cotações em tempo real. As taxas efetivas variam conforme a instituição, o perfil do cliente, o prazo e as condições da operação.
+            </div>
+        </div>
 
-            const principal = parseFloat(principalInput.value);
-            const annualRate = parseFloat(annualRateInput.value);
-            const termMonths = parseInt(termMonthsInput.value);
+        <h2 class="section-title">Entenda os juros</h2>
+        <p class="section-subtitle">
+            Aprenda como os juros funcionam e por que uma taxa aparentemente pequena pode representar um custo significativo ao longo do tempo.
+        </p>
 
-            const resultsDiv = document.getElementById('results');
-            const installmentOutput = document.getElementById('installment-value');
-            const totalPaidOutput = document.getElementById('total-paid-value');
-            const errorMsg = document.getElementById('error-message');
+        <div class="education-grid">
 
-            // Resetar resultados e erro
-            resultsDiv.classList.add('hidden');
-            errorMsg.classList.add('hidden');
+            <div class="education-card">
+                <div class="number">01 / CONCEITO</div>
+                <h3>O que são juros?</h3>
+                <p>
+                    Juros representam o custo de utilizar um dinheiro emprestado.
+                    Quando uma pessoa contrata um crédito, ela devolve o valor
+                    recebido acrescido dos juros acordados.
+                </p>
+            </div>
 
-            // 2. Validação básica dos dados
-            if (isNaN(principal) || isNaN(annualRate) || isNaN(termMonths) || principal <= 0 || annualRate < 0 || termMonths <= 0) {
-                errorMsg.textContent = "Por favor, preencha todos os campos com valores válidos e positivos.";
-                errorMsg.classList.remove('hidden');
-                return;
-            }
+            <div class="education-card">
+                <div class="number">02 / ECONOMIA</div>
+                <h3>O que é a Selic?</h3>
+                <p>
+                    É a taxa básica de juros da economia brasileira.
+                    Ela serve como referência para o mercado financeiro,
+                    influenciando empréstimos, financiamentos e investimentos.
+                </p>
+            </div>
 
-            // 3. Conversão da taxa de juros anual para mensal decimal
-            // Ex: 12% anuais -> 1% mensais -> 0.01
-            const monthlyRate = (annualRate / 100) / 12;
+            <div class="education-card">
+                <div class="number">03 / COMPOSIÇÃO</div>
+                <h3>Juros compostos</h3>
+                <p>
+                    Nos juros compostos, os juros de cada período são
+                    incorporados ao saldo, fazendo com que os próximos
+                    juros incidam também sobre os valores acumulados.
+                </p>
+            </div>
 
-            let monthlyPayment = 0;
-            let totalPaid = 0;
+            <div class="education-card">
+                <div class="number">04 / CRÉDITO</div>
+                <h3>Por que as taxas variam?</h3>
+                <p>
+                    Cada modalidade possui riscos e condições diferentes.
+                    Garantias, inadimplência, prazo e perfil do contratante
+                    podem influenciar o custo final do crédito.
+                </p>
+            </div>
 
-            try {
-                if (monthlyRate === 0) {
-                    // Se a taxa for zero, o pagamento é apenas o principal dividido pelo prazo
-                    monthlyPayment = principal / termMonths;
-                } else {
-                    // Fórmula de Amortização (Tabela Price): P = PV * [r * (1 + r)^n] / [(1 + r)^n - 1]
-                    const power = Math.pow(1 + monthlyRate, termMonths);
-                    monthlyPayment = principal * (monthlyRate * power) / (power - 1);
-                }
+        </div>
 
-                // Cálculo do Total Pago (Total de Crédito = Principal + Juros)
-                totalPaid = monthlyPayment * termMonths;
+        <div class="formula-box">
+            <h3>Como calcular a taxa anual equivalente?</h3>
 
-                // 4. Atualizar o DOM com os resultados formatados
-                installmentOutput.textContent = formatCurrency(monthlyPayment);
-                totalPaidOutput.textContent = formatCurrency(totalPaid);
-                
-                // Mostrar a área de resultados
-                resultsDiv.classList.remove('hidden');
+            <div class="formula">
+                i<sub>a</sub> = (1 + i<sub>m</sub>)<sup>12</sup> − 1
+            </div>
 
-            } catch (e) {
-                console.error("Erro durante o cálculo:", e);
-                errorMsg.textContent = "Ocorreu um erro inesperado no cálculo. Tente valores diferentes.";
-                errorMsg.classList.remove('hidden');
-            }
-        }
+            <p>
+                Para converter uma taxa mensal em anual, elevamos
+                (1 + a taxa mensal) à potência 12 e subtraímos 1.
+                O resultado representa a taxa efetiva anual.
+            </p>
 
-        // 5. Adicionar listener ao botão
-        document.getElementById('calculate-btn').addEventListener('click', calculateFinancing);
-        
-        // Calcular com os valores iniciais ao carregar a página
-        window.onload = function() {
-            calculateFinancing();
-        };
+            <div class="example-box">
+                <strong>Exemplo prático: 1% ao mês</strong>
+                <p>
+                    (1 + 0,01)<sup>12</sup> − 1 = 0,1268<br>
+                    Portanto, 1% ao mês equivale a aproximadamente
+                    <strong>12,68% ao ano</strong>.
+                </p>
+            </div>
 
-    </script>
+            <h3 style="margin-top:25px">Conversão da taxa anual para mensal</h3>
+
+            <div class="formula">
+                i<sub>m</sub> = (1 + i<sub>a</sub>)<sup>1/12</sup> − 1
+            </div>
+
+            <p>
+                Para descobrir a taxa mensal equivalente, utilizamos
+                a raiz de décima segunda potência do fator anual.
+                Essa conversão mantém a equivalência dos juros compostos.
+            </p>
+        </div>
+
+        <div class="card" style="margin-top:22px">
+            <h2>Por que conhecer as taxas de juros?</h2>
+            <p class="card-description" style="margin-bottom:0">
+                Entender as taxas é essencial para avaliar o custo de um financiamento,
+                comparar propostas de crédito e tomar decisões financeiras mais conscientes.
+                Uma taxa anual elevada pode aumentar significativamente o valor total
+                pago, mesmo quando as parcelas parecem caber no orçamento.
+            </p>
+        </div>
+
+    </section>
+
+</main>
+
+<footer>
+    FINANCECALC · Simulador e educação financeira<br>
+    Ferramenta educativa. Resultados sujeitos às condições de cada operação.<br> Todos os direitos reservados a Cauã Santos.
+</footer>
+
+<script>
+
+// NAVEGAÇÃO ENTRE ABAS
+
+const tabs = document.querySelectorAll('.tab');
+const panels = document.querySelectorAll('.panel');
+
+tabs.forEach(tab => {
+    tab.addEventListener('click', () => {
+
+        tabs.forEach(t => t.classList.remove('active'));
+        panels.forEach(p => p.classList.remove('active'));
+
+        tab.classList.add('active');
+        document.getElementById(tab.dataset.tab).classList.add('active');
+
+    });
+});
+
+
+// FORMATAÇÃO DE VALORES
+
+const currency = value => new Intl.NumberFormat('pt-BR', {
+    style: 'currency',
+    currency: 'BRL'
+}).format(value);
+
+
+// CONVERSÃO DE TAXAS
+
+function annualToMonthly(annualRate) {
+    return Math.pow(1 + annualRate / 100, 1 / 12) - 1;
+}
+
+function monthlyToAnnual(monthlyRate) {
+    return Math.pow(1 + monthlyRate, 12) - 1;
+}
+
+
+// SIMULADOR DE FINANCIAMENTO - TABELA PRICE
+
+function calculateFinancing() {
+
+    const principal = Number(document.getElementById('principal').value);
+    const annualRate = Number(document.getElementById('annualRate').value);
+    const term = Number(document.getElementById('termMonths').value);
+
+    const error = document.getElementById('error');
+    const results = document.getElementById('results');
+
+    error.style.display = 'none';
+    results.classList.remove('show');
+
+    if (
+        !Number.isFinite(principal) ||
+        !Number.isFinite(annualRate) ||
+        !Number.isFinite(term) ||
+        principal <= 0 ||
+        annualRate < 0 ||
+        !Number.isInteger(term) ||
+        term <= 0 ||
+        term > 1200
+    ) {
+        error.textContent = 'Informe valores válidos. O prazo deve ser um número inteiro entre 1 e 1200 meses.';
+        error.style.display = 'block';
+        return;
+    }
+
+    // Taxa anual efetiva convertida em mensal equivalente
+    const monthlyRate = annualToMonthly(annualRate);
+
+    let installment;
+
+    if (monthlyRate === 0) {
+        installment = principal / term;
+    } else {
+        const power = Math.pow(1 + monthlyRate, term);
+
+        installment =
+            principal * (monthlyRate * power) / (power - 1);
+    }
+
+    const totalPaid = installment * term;
+    const totalInterest = totalPaid - principal;
+
+    if (!Number.isFinite(installment) || !Number.isFinite(totalPaid)) {
+        error.textContent = 'Não foi possível calcular. Verifique os valores informados.';
+        error.style.display = 'block';
+        return;
+    }
+
+    document.getElementById('installment').textContent =
+        currency(installment);
+
+    document.getElementById('totalPaid').textContent =
+        currency(totalPaid);
+
+    document.getElementById('totalInterest').textContent =
+        currency(totalInterest);
+
+    document.getElementById('monthlyRate').textContent =
+        (monthlyRate * 100).toLocaleString('pt-BR', {
+            minimumFractionDigits: 4,
+            maximumFractionDigits: 4
+        }) + '%';
+
+    results.classList.add('show');
+}
+
+
+// BOTÕES
+
+document.getElementById('calculate').addEventListener('click', calculateFinancing);
+
+document.getElementById('useSelic').addEventListener('click', () => {
+    document.getElementById('annualRate').value = '13.75';
+    calculateFinancing();
+});
+
+
+// TABELA DE JUROS BRASILEIROS
+
+const rates = [
+    { name: 'Taxa Selic', annual: 13.75, tag: 'Taxa básica' },
+    { name: 'Média geral do crédito (PF e PJ)', annual: 32.40 },
+    { name: 'Consignado INSS', annual: 23.87 },
+    { name: 'Consignado Público', annual: 28.32 },
+    { name: 'Consignado Privado', annual: 47.64 },
+    { name: 'Empréstimo pessoal não consignado', annual: 122.71 },
+    { name: 'Cheque especial', annual: 151.82 },
+    { name: 'Rotativo do cartão de crédito', annual: 463.62 }
+];
+
+const table = document.getElementById('ratesTable');
+
+rates.forEach(rate => {
+
+    const monthly = annualToMonthly(rate.annual) * 100;
+
+    const row = document.createElement('tr');
+
+    const name = document.createElement('td');
+    const annual = document.createElement('td');
+    const month = document.createElement('td');
+
+    const strong = document.createElement('strong');
+    strong.textContent = rate.name;
+    name.appendChild(strong);
+
+    if (rate.tag) {
+        const tag = document.createElement('div');
+        tag.style.cssText = 'font-size:10px;color:#079455;margin-top:5px';
+        tag.textContent = rate.tag;
+        name.appendChild(tag);
+    }
+
+    annual.className = 'rate-year';
+    annual.textContent = rate.annual.toLocaleString('pt-BR', {
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2
+    }) + '% a.a.';
+
+    month.className = 'rate-month';
+    month.textContent = monthly.toLocaleString('pt-BR', {
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2
+    }) + '% a.m.';
+
+    row.append(name, annual, month);
+    table.appendChild(row);
+
+});
+
+
+// CALCULAR AUTOMATICAMENTE AO ABRIR
+
+calculateFinancing();
+
+</script>
+
 </body>
 </html>
-
